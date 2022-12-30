@@ -92,7 +92,7 @@ if [ $createUser == "skip" ]; then
     clear
 
     echo -e "Installation complete. If you selected manual install or need to create users, you may want to do some configuration in chroot. \n"
-    echo -e "If you are ready to reboot into your new system, exit the chroot and reboot. \n"
+    echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
     rm /home/systemchroot.sh
 else
 
