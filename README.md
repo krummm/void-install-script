@@ -13,7 +13,7 @@ Select which of the above features you would like, if any
 
 # Instructions
 ```
-Boot into a Void Linux (glibc only for the moment) live medium
+Boot into a Void Linux live medium
 Login as root
 xbps-install -S git
 git clone https://github.com/krummm/void-install-script/
