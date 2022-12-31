@@ -35,7 +35,6 @@ As of right now, this script only supports encrypted installs and x86_64-efi ins
 ```
 Add input validation and error checking to the scripts
 Add legacy boot support
-Add non-encrypted install support
 Add support for filesystems other than ext4
 Add script logging
 ```
