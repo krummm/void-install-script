@@ -239,12 +239,14 @@ desktopExtras() {
     touch /root/graphicsSelection/amd
     touch /root/graphicsSelection/nvidia
     touch /root/graphicsSelection/intel
+    touch /root/graphicsSelection/nvidia-optimus
     touch /root/graphicsSelection/skip
     cd /root/graphicsSelection
     
     clear
 
     echo -e "If you would like to install graphics drivers, please enter 'amd' or 'nvidia' or 'intel' here, depending on what graphics card you have. \n"
+    echo -e "If you are using an nvidia optimus system (intel + nvidia graphics), you can choose 'nvidia-optimus' here to install drivers for both. \n"
     echo -e "If you would like to skip installing graphics drivers here, choose 'skip' \n"
 
     graphicsChoice=$(fzf --height 10%)
@@ -264,6 +266,11 @@ desktopExtras() {
         echo -e "Installing INTEL graphics drivers... \n"
         xbps-install -Sy -R $installRepo -r /mnt mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel
         echo -e "INTEL graphics drivers have been installed... \n"
+    elif [ $graphicsChoice == "nvidia-optimus" ]; then
+        echo -e "Installing INTEL and NVIDIA graphics drivers... \n"
+        xbps-install -Sy -R $installRepo -r /mnt void-repo-nonfree
+        xbps-install -Sy -R $installRepo -r /mnt nvidia mesa-dri vulkan-loader mesa-vulkan-intel intel-video-accel
+        echo -e "INTEL and NVIDIA graphics drivers have been installed... \n"
     fi
 
     clear
