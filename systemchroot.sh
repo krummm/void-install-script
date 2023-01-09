@@ -102,13 +102,6 @@ if [ $createUser == "skip" ]; then
 
     clear
 
-    echo -e "Would you like to chroot into the new installation to do any configuration? (y/n) \n"
-    read chrootPrompt
-
-    if [ $chrootPrompt == "y" ] || [ $chrootPrompt == "Y" ]; then
-        chroot /mnt /bin/bash
-    fi
-
     echo -e "Installation complete. \n"
     echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
     rm /home/systemchroot.sh
@@ -135,13 +128,6 @@ else
     xbps-reconfigure -fa
 
     clear
-
-    echo -e "Would you like to chroot into the new installation to do any configuration? (y/n) \n"
-    read chrootPrompt
-
-    if [ $chrootPrompt == "y" ] || [ $chrootPrompt == "Y" ]; then
-        chroot /mnt /bin/bash
-    fi
 
     echo -e "Installation complete. \n"
     echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
