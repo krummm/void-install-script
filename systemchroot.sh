@@ -57,7 +57,7 @@ if test -e "/usr/bin/cryptsetup" ; then
 
     echo -e "Configuring LUKS key... \n"
 
-    diskInput=$(cat /home/installdrive)
+    diskInput=$(cat /home/installDrive)
     if [[ $diskInput == /dev/nvme* ]] ; then
         partition2="$diskInput"p2
     else
@@ -76,11 +76,17 @@ if test -e "/usr/bin/cryptsetup" ; then
     dracutConf='install_items+=" /boot/volume.key /etc/crypttab "'
     echo "$dracutConf" >> /etc/dracut.conf.d/10-crypt.conf
 
-    rm /home/installdrive
+    rm /home/installDrive
     echo "LUKS key configured."
 
 fi
 
+clear
+
+timezonePrompt=$(cat /home/selectTimezone)
+ln -sf /usr/share/zoneinfo/$timezonePrompt /etc/localtime
+rm /home/selectTimezone
+    
 clear
 
 echo -e "If you would like to create a new user, enter a username here. \n"
@@ -89,9 +95,21 @@ read createUser
 
 if [ $createUser == "skip" ]; then
     xbps-reconfigure -fa
+
+    if test -e "/dev/mapper/void-home" ; then
+        mount /dev/mapper/void-home /home
+    fi
+
     clear
 
-    echo -e "Installation complete. If you selected manual install or need to create users, you may want to do some configuration in chroot. \n"
+    echo -e "Would you like to chroot into the new installation to do any configuration? (y/n) \n"
+    read chrootPrompt
+
+    if [ $chrootPrompt == "y" ] || [ $chrootPrompt == "Y" ]; then
+        chroot /mnt /bin/bash
+    fi
+
+    echo -e "Installation complete. \n"
     echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
     rm /home/systemchroot.sh
 else
@@ -105,10 +123,11 @@ else
     echo "Please set the password for the user $createUser:"
     passwd $createUser
     usermod -aG audio,video,input,kvm $createUser
-    echo -e "Should this user be a superuser? (y/n) \n"
+    clear
+    echo -e "Should user $createUser be a superuser? (y/n) \n"
     read superPrompt
 
-    if [ $superPrompt == "y" ]; then
+    if [ $superPrompt == "y" ] || [ $superPrompt == "Y"]; then
         usermod -aG wheel $createUser
         sed -i -e 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
     fi
@@ -116,7 +135,15 @@ else
     xbps-reconfigure -fa
 
     clear
-    echo -e "Installation complete. If you selected manual install or need to create users, you may want to do some configuration in chroot. \n"
+
+    echo -e "Would you like to chroot into the new installation to do any configuration? (y/n) \n"
+    read chrootPrompt
+
+    if [ $chrootPrompt == "y" ] || [ $chrootPrompt == "Y" ]; then
+        chroot /mnt /bin/bash
+    fi
+
+    echo -e "Installation complete. \n"
     echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
     rm /home/systemchroot.sh
 
