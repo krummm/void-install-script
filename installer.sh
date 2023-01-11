@@ -6,6 +6,8 @@ if [ $user != root ]; then
     exit 1
 fi
 
+runDirectory=$(pwd)
+
 locale="LANG=en_US.UTF-8"
 libclocale="en_US.UTF-8 UTF-8"
 
@@ -154,7 +156,7 @@ install() {
         echo "/dev/void/swap  swap  swap    defaults              0       0" >> /mnt/etc/fstab
     fi
 
-    if [ $homePrompt == "y" ]; then
+    if [ $homePrompt == "y" ] && [ $separateHomePossible == "1" ]; then
         echo "/dev/void/home  /home ext4     defaults              0       0" >> /mnt/etc/fstab
     fi
 
@@ -209,7 +211,7 @@ install() {
     clear
 
     echo -e "Would you like a minimal installation or a desktop installation? \n"
-    echo -e "The minimal installation does not configure networking, graphics drivers, DE/WM, etc. Manually configure in the chroot after the install has finished. \n"
+    echo -e "The minimal installation does not configure networking, graphics drivers, DE/WM, etc. You can manually configure in a chroot after the install has finished. \n"
     echo -e "The desktop installation will allow you to install NetworkManager, install graphics drivers, and install a DE or WM from this installer with sane defaults. \n"
 
     installType=$(fzf --height 10%)
@@ -226,7 +228,7 @@ install() {
         cp /root/installDrive /mnt/home/installDrive
         echo -e "Chrooting into new installation for final setup... \n"
         sleep 1
-        cp -f /root/systemchroot.sh /mnt/home/systemchroot.sh
+        cp -f $runDirectory/systemchroot.sh /mnt/home/systemchroot.sh
         chroot /mnt /bin/bash -c "/bin/bash /home/systemchroot.sh"
     elif [ $installType == "desktop" ]; then
         desktopExtras
@@ -245,7 +247,7 @@ desktopExtras() {
     
     clear
 
-    echo -e "If you would like to install graphics drivers, please enter 'amd' or 'nvidia' or 'intel' here, depending on what graphics card you have. \n"
+    echo -e "If you would like to install graphics drivers, please choose 'amd' or 'nvidia' or 'intel' here, depending on what graphics card you have. \n"
     echo -e "If you are using an nvidia optimus system (intel + nvidia graphics), you can choose 'nvidia-optimus' here to install drivers for both. \n"
     echo -e "If you would like to skip installing graphics drivers here, choose 'skip' \n"
 
@@ -279,7 +281,7 @@ desktopExtras() {
     read networkChoice
 
     if [ $networkChoice == "y" ] || [ $networkChoice == "Y" ]; then
-        echo -e "Setting up NetworkManager... \n"
+        echo -e "Installing NetworkManager... \n"
         xbps-install -Sy -R $installRepo -r /mnt NetworkManager
         echo -e "NetworkManager installed... \n"
     fi
@@ -348,7 +350,7 @@ desktopExtras() {
         echo -e "Sway will have to be started manually on login. This can be done by entering 'dbus-run-session sway' after logging in to the new installation. \n"
         sleep 4
         echo -e "Installing Sway window manager... \n"
-        xbps-install -Sy -R $installRepo -r /mnt sway elogind polkit-elogind dbus-elogind foot
+        xbps-install -Sy -R $installRepo -r /mnt sway elogind polkit-elogind dbus-elogind foot xorg-fonts
         echo -e "Sway installed. \n"
         sleep 1
     elif [ $desktopChoice == "i3" ]; then
@@ -389,7 +391,7 @@ desktopExtras() {
     touch /root/installDrive
     echo "$diskInput" >> installDrive
     cp /root/installDrive /mnt/home/installDrive
-    cp -f /root/systemchroot.sh /mnt/home/systemchroot.sh
+    cp -f $runDirectory/systemchroot.sh /mnt/home/systemchroot.sh
     chroot /mnt /bin/bash -c "/bin/bash /home/systemchroot.sh"
 
 }
