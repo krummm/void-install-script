@@ -17,6 +17,7 @@ Boot into a Void Linux live medium
 Login as root
 xbps-install -S git
 git clone https://github.com/krummm/void-install-script/
+cd void-install-script
 chmod +x installer.sh
 ./installer.sh
 Follow on-screen steps
