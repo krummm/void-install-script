@@ -161,16 +161,13 @@ installOptions() {
         #Graphics driver options
         mkdir /root/graphicsSelection
         touch /root/graphicsSelection/amd
-        touch /root/graphicsSelection/nvidia
         touch /root/graphicsSelection/intel
-        touch /root/graphicsSelection/nvidia-optimus
         touch /root/graphicsSelection/skip
         cd /root/graphicsSelection
     
         clear
 
-        echo -e "If you would like to install graphics drivers, please choose 'amd' or 'nvidia' or 'intel' here, depending on what graphics card you have. \n"
-        echo -e "If you are using an nvidia optimus system (intel + nvidia graphics), you can choose 'nvidia-optimus' here to install drivers for both. \n"
+        echo -e "If you would like to install graphics drivers, please choose 'amd' or 'intel' here, depending on what graphics card you have. \n"
         echo -e "If you would like to skip installing graphics drivers here, choose 'skip' \n"
 
         graphicsChoice=$(fzf --height 10%)
@@ -387,19 +384,7 @@ install() {
     echo -e "Grub configured... \n"
 
     if [ $installType == "minimal" ]; then
-
-        cp /etc/resolv.conf /mnt/etc
-        touch /root/selectTimezone
-        echo "$timezonePrompt" >> /root/selectTimezone
-        cp /root/selectTimezone /mnt/home/selectTimezone
-        touch /root/installDrive
-        echo "$diskInput" >> /root/installDrive
-        cp /root/installDrive /mnt/home/installDrive
-        echo -e "Chrooting into new installation for final setup... \n"
-        sleep 1
-        cp -f $runDirectory/systemchroot.sh /mnt/home/systemchroot.sh
-        chroot /mnt /bin/bash -c "/bin/bash /home/systemchroot.sh"
-
+        chrootFunction
     elif [ $installType == "desktop" ]; then
 
         # Graphics drivers
@@ -487,17 +472,20 @@ install() {
         echo -e "Desktop setup completed. \n"
         echo -e "The system will now chroot into the new installation for final setup... \n"
 
-        cp /etc/resolv.conf /mnt/etc
-        touch /root/selectTimezone
-        echo "$timezonePrompt" >> /root/selectTimezone
-        cp /root/selectTimezone /mnt/home/selectTimezone
-        touch /root/installDrive
-        echo "$diskInput" >> /root/installDrive
-        cp /root/installDrive /mnt/home/installDrive
-        cp -f $runDirectory/systemchroot.sh /mnt/home/systemchroot.sh
-        chroot /mnt /bin/bash -c "/bin/bash /home/systemchroot.sh"
-
+        chrootFunction
     fi
+}
+
+chrootFunction() {
+    cp /etc/resolv.conf /mnt/etc
+    touch /root/selectTimezone
+    echo "$timezonePrompt" >> /root/selectTimezone
+    cp /root/selectTimezone /mnt/home/selectTimezone
+    touch /root/installDrive
+    echo "$diskInput" >> /root/installDrive
+    cp /root/installDrive /mnt/home/installDrive
+    cp -f $runDirectory/systemchroot.sh /mnt/home/systemchroot.sh
+    chroot /mnt /bin/bash -c "/bin/bash /home/systemchroot.sh"
 }
 
 entry
