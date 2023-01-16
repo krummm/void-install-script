@@ -1,8 +1,42 @@
 #!/bin/bash
 chown root:root /
 chmod 755 /
-echo "Set your root password:"
-passwd root
+
+userPassword() {
+    echo "Set the password for the user $createUser:"
+    passwd $createUser
+
+    if [ $? == "10" ]; then
+        clear
+        echo "Sorry, your passwords do not match."
+        userPassword
+    fi
+
+    echo -e "Installation complete. \n"
+    echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
+    rm /home/systemchroot.sh
+    exit 0
+}
+
+rootPassword() {
+    echo "Set your root password:"
+    passwd root
+
+    if [ $? == "10" ]; then
+        clear
+        echo "Sorry, your passwords do not match."
+        rootPassword
+    fi
+
+    if [ $createUser != "skip" ]; then
+        userPassword
+    fi
+
+    echo -e "Installation complete. \n"
+    echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
+    rm /home/systemchroot.sh
+    exit 0
+}
 
 echo -e "Running grub-install... \n"
 grub-install --removable --target=x86_64-efi
@@ -101,10 +135,9 @@ if [ $createUser == "skip" ]; then
     fi
 
     clear
+    
+    rootPassword
 
-    echo -e "Installation complete. \n"
-    echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
-    rm /home/systemchroot.sh
 else
 
     if test -e "/dev/mapper/void-home" ; then
@@ -112,9 +145,6 @@ else
     fi
 
     useradd $createUser -m -d /home/$createUser
-    clear
-    echo "Please set the password for the user $createUser:"
-    passwd $createUser
     usermod -aG audio,video,input,kvm $createUser
     clear
     echo -e "Should user $createUser be a superuser? (y/n) \n"
@@ -129,8 +159,6 @@ else
 
     clear
 
-    echo -e "Installation complete. \n"
-    echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
-    rm /home/systemchroot.sh
+    rootPassword
 
 fi
