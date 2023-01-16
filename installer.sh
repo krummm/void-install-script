@@ -6,6 +6,26 @@ if [ $user != root ]; then
     exit 1
 fi
 
+# Check to see if there is a flag when executing installer.sh and make sure it's a .sh file to be imported as an installation config
+if [ $# != 1 ]; then
+    echo "Continuing without config file..."
+    sleep 1
+    configDetected=0
+    sleep 1
+elif [ $# == 1 ]; then
+    echo "Attempting to use user-defined config file..."
+    sleep 1
+
+    if [[ $1 == *.sh ]] ; then
+        source $1
+        configDetected=1
+    else
+        echo "User-defined config detected but is either misinput or the wrong file type. Please correct this and run again."
+        exit 1
+    fi
+
+fi
+
 entry() {
 
     # Defining things the installer will need
@@ -36,8 +56,14 @@ entry() {
 
     echo -e "Grabbing installer dependencies... \n"
     xbps-install -Sy -R $installRepo fzf parted void-repo-nonfree
+
+    # Check for a config defined as a flag, if one exists then move to confirm options with values defined in said config
     
-    diskConfiguration
+    if [ $configDetected == "1" ]; then
+        confirmInstallationOptions
+    else
+        diskConfiguration
+    fi
 
 }
 
@@ -234,15 +260,42 @@ installOptions() {
 
 confirmInstallationOptions() {
 
+    # If a config is being used, we need to set some variables that weren't defined earlier in the script
+    if [ $configDetected == "1" ]; then
+
+        if [ $rootPrompt != "full" ]; then
+            separateHomePossible=1
+        else
+            separateHomePossible=0
+        fi
+
+        if [[ $diskInput == /dev/nvme* ]] ; then
+            partition1="$diskInput"p1
+            partition2="$diskInput"p2
+        else
+            partition1="$diskInput"1
+            partition2="$diskInput"2
+        fi
+    fi
+
     # Allow the user to make sure things are sound before destroying the data on their disk
     mkdir /root/confirmInstallMenu
     touch /root/confirmInstallMenu/confirm
-    touch /root/confirmInstallMenu/restart
+
+    if [ $configDetected == "0" ]; then
+        touch /root/confirmInstallMenu/restart
+    elif [ $configDetected == "1" ]; then
+        touch /root/confirmInstallMenu/exit
+    fi
     cd /root/confirmInstallMenu
     clear
 
     echo "Your disk will not be touched until you select 'confirm'"
-    echo -e "If these choices are in any way incorrect, you may select 'restart' to go back to the beginning of the installer and start over."
+    if [ $configDetected == "0" ]; then
+        echo -e "If these choices are in any way incorrect, you may select 'restart' to go back to the beginning of the installer and start over."
+    elif [ $configDetected == "1" ]; then
+        echo -e "If these choices are in any way incorrect, you may select 'exit' to close the installer and make changes to your config."
+    fi
     echo -e "If the following choices are correct, you may select 'confirm' to proceed with the installation. \n"
     echo -e "Selecting 'confirm' here will destroy all data on the selected disk and install with the options below. \n"
 
@@ -267,6 +320,7 @@ confirmInstallationOptions() {
         echo "Install NetworkManager: $networkChoice"
         echo "Audio server: $audioChoice"
         echo "DE/WM: $desktopChoice"
+        echo "Install flatpak: $flatpakPrompt"
     fi
 
     confirmInstall=$(fzf --height 10%)
@@ -275,6 +329,8 @@ confirmInstallationOptions() {
         entry
     elif [ $confirmInstall == "confirm" ]; then
         install
+    elif [ $confirmInstall == "exit" ]; then
+        exit 1
     fi
 
     cd /root
@@ -476,6 +532,7 @@ install() {
     fi
 }
 
+# Passing some stuff over to the new install to be used by the secondary script
 chrootFunction() {
     cp /etc/resolv.conf /mnt/etc
     touch /root/selectTimezone
