@@ -34,8 +34,6 @@ Take a look at exampleconfig.sh for usage.
 Obviously, this is in no way officially supported nor should it be treated like such. Any issues with this install script should be filed here, do not bother
 anyone else with this.
 
-The NVIDIA graphics driver options are currently disabled as they need more testing, though they can be installed by editing the script or using the config.
-
 Make certain both script files are in the same directory before running installer.sh
 
 As of right now, this script only supports encrypted installs and x86_64-efi installations
