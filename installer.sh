@@ -11,7 +11,6 @@ if [ $# != 1 ]; then
     echo "Continuing without config file..."
     sleep 1
     configDetected=0
-    sleep 1
 elif [ $# == 1 ]; then
     echo "Attempting to use user-defined config file..."
     sleep 1
