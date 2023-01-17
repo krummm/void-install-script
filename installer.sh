@@ -187,6 +187,8 @@ installOptions() {
         mkdir /root/graphicsSelection
         touch /root/graphicsSelection/amd
         touch /root/graphicsSelection/intel
+        touch /root/graphicsSelection/nvidia
+        touch /root/graphicsSelection/nvidia-optimus
         touch /root/graphicsSelection/skip
         cd /root/graphicsSelection
     
@@ -482,7 +484,7 @@ install() {
         # DE/WM
         if [ $desktopChoice == "gnome" ]; then
             echo -e "Installing Gnome desktop environment... \n"
-            xbps-install -Sy -R $installRepo -r /mnt gnome
+            xbps-install -Sy -R $installRepo -r /mnt gnome xorg-minimal
             echo -e "Gnome installed. \n"
             sleep 1
         elif [ $desktopChoice == "kde" ]; then
