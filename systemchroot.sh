@@ -14,7 +14,7 @@ userPassword() {
 
     echo -e "Installation complete. \n"
     echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
-    rm /home/systemchroot.sh
+
     exit 0
 }
 
@@ -34,7 +34,7 @@ rootPassword() {
 
     echo -e "Installation complete. \n"
     echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
-    rm /home/systemchroot.sh
+
     exit 0
 }
 
@@ -91,7 +91,7 @@ if test -e "/usr/bin/cryptsetup" ; then
 
     echo -e "Configuring LUKS key... \n"
 
-    diskInput=$(cat /home/installDrive)
+    diskInput=$(cat /tmp/installDrive)
     if [[ $diskInput == /dev/nvme* ]] ; then
         partition2="$diskInput"p2
     else
@@ -117,7 +117,7 @@ fi
 
 clear
 
-timezonePrompt=$(cat /home/selectTimezone)
+timezonePrompt=$(cat /tmp/selectTimezone)
 ln -sf /usr/share/zoneinfo/$timezonePrompt /etc/localtime
 rm /home/selectTimezone
     
