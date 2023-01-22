@@ -12,6 +12,10 @@ userPassword() {
         userPassword
     fi
 
+    xbps-reconfigure -fa
+
+    clear
+
     echo -e "Installation complete. \n"
     echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
 
@@ -31,6 +35,10 @@ rootPassword() {
     if [ $createUser != "skip" ]; then
         userPassword
     fi
+
+    xbps-reconfigure -fa
+
+    clear
 
     echo -e "Installation complete. \n"
     echo -e "If you are ready to reboot into your new system, enter 'reboot now'. \n"
@@ -128,7 +136,6 @@ echo -e "If you do not want to add a user now, enter 'skip' \n"
 read createUser
 
 if [ $createUser == "skip" ]; then
-    xbps-reconfigure -fa
 
     if test -e "/dev/mapper/void-home" ; then
         mount /dev/mapper/void-home /home
@@ -154,8 +161,6 @@ else
         usermod -aG wheel $createUser
         sed -i -e 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/g' /etc/sudoers
     fi
-
-    xbps-reconfigure -fa
 
     clear
 
