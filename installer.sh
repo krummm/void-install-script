@@ -538,12 +538,12 @@ chrootFunction() {
     cp /etc/resolv.conf /mnt/etc
     touch /root/selectTimezone
     echo "$timezonePrompt" >> /root/selectTimezone
-    cp /root/selectTimezone /mnt/home/selectTimezone
+    cp /root/selectTimezone /mnt/tmp/selectTimezone
     touch /root/installDrive
     echo "$diskInput" >> /root/installDrive
-    cp /root/installDrive /mnt/home/installDrive
-    cp -f $runDirectory/systemchroot.sh /mnt/home/systemchroot.sh
-    chroot /mnt /bin/bash -c "/bin/bash /home/systemchroot.sh"
+    cp /root/installDrive /mnt/tmp/installDrive
+    cp -f $runDirectory/systemchroot.sh /mnt/tmp/systemchroot.sh
+    chroot /mnt /bin/bash -c "/bin/bash /tmp/systemchroot.sh"
 }
 
 entry
