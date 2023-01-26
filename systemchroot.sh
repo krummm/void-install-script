@@ -55,9 +55,14 @@ if test -e "/etc/sv/dbus" ; then
     ln -s /etc/sv/dbus /var/service
 fi
 
-if test -e "/etc/sv/NetworkManager" ; then
+networkChoice=$(cat /tmp/networking)
+
+if [ $networkChoice == "NetworkManager" ]; then
     echo -e "Starting NetworkManager... \n"
     ln -s /etc/sv/NetworkManager /var/service
+elif [ $networkChoice == "dhcpcd" ]; then
+    echo -e "Starting dhcpcd... \n"
+    ln -s /etc/sv/dhcpcd /var/service
 fi
 
 if test -e "/usr/share/applications/pipewire.desktop" ; then
