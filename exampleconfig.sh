@@ -18,7 +18,7 @@ installType="desktop" # Defines your install profile, desktop will allow things 
 # The following install options are ONLY available if you are using the desktop profile defined above.
 
 graphicsChoice="amd" # Defines your graphics driver selection, acceptable values here include 'amd', 'intel', 'nvidia', and 'nvidia-optimus'
-networkChoice="y" # Tells the installer if it should install NetworkManager or not (y/n)
+networkChoice="NetworkManager" # Defines your networking selection, another acceptable value here is 'dhcpcd'
 audioChoice="pipewire" # Defines your audio server selection, acceptable values here include 'pipewire' and 'pulseaudio'
 desktopChoice="gnome" # Defines your DE/WM selection, acceptable values here include 'gnome', 'kde', 'xfce', 'sway', 'i3', and 'cinnamon'
 flatpakPrompt="y" # Tells the installer if it should install flatpak or not (y/n)
