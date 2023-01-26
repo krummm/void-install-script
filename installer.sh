@@ -176,14 +176,14 @@ installOptions() {
 
     installType=$(fzf --height 10%)
 
-    cd /root/
+    cd /root
 
     clear
 
     # Extra install options
     if [ $installType == "desktop" ]; then
 
-        #Graphics driver options
+        # Graphics driver options
         mkdir /root/graphicsSelection
         touch /root/graphicsSelection/amd
         touch /root/graphicsSelection/intel
@@ -199,13 +199,25 @@ installOptions() {
 
         graphicsChoice=$(fzf --height 10%)
 
-        cd /root/
+        cd /root
 
         clear
 
-        # I don't know why someone wouldn't want NM, but hey;
-        echo -e "Would you like to install NetworkManager? (y/n) \n"
-        read networkChoice
+        # Networking choice
+        mkdir /root/networkSelection
+        touch /root/networkSelection/NetworkManager
+        touch /root/networkSelection/dhcpcd
+        touch /root/networkSelection/skip
+        cd /root/networkSelection
+
+        clear
+
+        echo -e "If you would like the installer to install NetworkManager or enable dhcpcd, choose one here. \n"
+        echo -e "If you do not know what this means, choose 'NetworkManager'. If you would like to skip this, choose 'skip' \n"
+
+        networkChoice=$(fzf --height 10%)
+
+        cd /root
 
         clear
 
@@ -245,7 +257,7 @@ installOptions() {
 
         desktopChoice=$(fzf --height 10%)
 
-        cd /root/
+        cd /root
 
         clear
 
@@ -318,7 +330,7 @@ confirmInstallationOptions() {
     echo "Installation profile: $installType"
     if [ $installType == "desktop" ]; then
         echo "Graphics drivers: $graphicsChoice"
-        echo "Install NetworkManager: $networkChoice"
+        echo "Networking: $networkChoice"
         echo "Audio server: $audioChoice"
         echo "DE/WM: $desktopChoice"
         echo "Install flatpak: $flatpakPrompt"
@@ -466,7 +478,7 @@ install() {
         fi
 
         # Networkmanager
-        if [ $networkChoice == "y" ] || [ $networkChoice == "Y" ]; then
+        if [ $networkChoice == "NetworkManager" ]; then
             echo -e "Installing NetworkManager... \n"
             xbps-install -Sy -R $installRepo -r /mnt NetworkManager
         fi
@@ -542,6 +554,9 @@ chrootFunction() {
     touch /root/installDrive
     echo "$diskInput" >> /root/installDrive
     cp /root/installDrive /mnt/tmp/installDrive
+    touch /root/networking
+    echo "$networkChoice" >> /root/networking
+    cp /root/networking /mnt/tmp/networking
     cp -f $runDirectory/systemchroot.sh /mnt/tmp/systemchroot.sh
     chroot /mnt /bin/bash -c "/bin/bash /tmp/systemchroot.sh"
 }
