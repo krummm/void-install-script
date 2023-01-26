@@ -8,7 +8,7 @@ This installer was primarily created to serve as an installer with encryption su
 Encrypted install
 Experimental config support
 Install a bare minimum system quickly
-Install a system with NetworkManager, graphics drivers, audio server, and a DE/WM ready to go on reboot
+Install a system with networking, graphics drivers, audio server, and a DE/WM ready to go on reboot
 Select which of the above features you would like, if any
 ```
 
