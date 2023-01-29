@@ -70,7 +70,6 @@ diskConfiguration() {
 
     # We're going to define all disk options and use them later on so the user can verify the layout and return to entry to start over if something isn't correct, before touching the disks.
     clear
-    # Should probably make this a selection menu to prevent invalid user input
     echo -e "AVAILABLE DISKS: \n"
     lsblk -o NAME,SIZE,TYPE
     echo -e "The disk you choose will not be modified until you confirm your installation options. \n"
