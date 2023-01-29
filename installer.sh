@@ -72,10 +72,10 @@ diskConfiguration() {
     clear
     # Should probably make this a selection menu to prevent invalid user input
     echo -e "AVAILABLE DISKS: \n"
-    lsblk -o NAME,SIZE
+    lsblk -o NAME,SIZE,TYPE
     echo -e "The disk you choose will not be modified until you confirm your installation options. \n"
-    echo -e "Please enter the disk you would like to partition and install Void Linux to: (Example: 'sda') \n"
-    read diskPrompt
+    echo -e "Please choose the disk you would like to partition and install Void Linux to: \n"
+    diskPrompt=$(lsblk -o NAME -n -i -r | fzf --height 10%)
 
     diskInput="/dev/$diskPrompt"
 
@@ -133,19 +133,10 @@ installOptions() {
     clear
 
     # Getting libc options
-    mkdir /root/muslOptions
-    touch /root/muslOptions/glibc
-    touch /root/muslOptions/musl
-    cd /root/muslOptions
-
-    clear
-
     echo -e "What kind of system are you installing? (musl or glibc) \n"
     echo -e "If you chose a glibc installation ISO, please choose glibc here.\n"
 
-    muslSelection=$(fzf --height 10%)
-
-    cd /root
+    muslSelection=$(echo -e "glibc\nmusl" | fzf --height 10%)
 
     clear
 
@@ -163,20 +154,11 @@ installOptions() {
     clear
 
     # Getting installation profile
-    mkdir /root/profileSelection
-    touch /root/profileSelection/desktop
-    touch /root/profileSelection/minimal
-    cd /root/profileSelection
-    
-    clear
-
     echo -e "Would you like a minimal installation or a desktop installation? \n"
     echo -e "The minimal installation does not configure networking, graphics drivers, DE/WM, etc. You can manually configure in a chroot after the install has finished. \n"
     echo -e "The desktop installation will allow you to install NetworkManager, install graphics drivers, and install a DE or WM from this installer with sane defaults. \n"
 
-    installType=$(fzf --height 10%)
-
-    cd /root
+    installType=$(echo -e "minimal\ndesktop" | fzf --height 10%)
 
     clear
 
@@ -184,80 +166,34 @@ installOptions() {
     if [ $installType == "desktop" ]; then
 
         # Graphics driver options
-        mkdir /root/graphicsSelection
-        touch /root/graphicsSelection/amd
-        touch /root/graphicsSelection/intel
-        touch /root/graphicsSelection/nvidia
-        touch /root/graphicsSelection/nvidia-optimus
-        touch /root/graphicsSelection/skip
-        cd /root/graphicsSelection
-    
-        clear
-
         echo -e "If you would like to install graphics drivers, please choose 'amd' or 'intel' here, depending on what graphics card you have. \n"
         echo -e "If you would like to skip installing graphics drivers here, choose 'skip' \n"
 
-        graphicsChoice=$(fzf --height 10%)
-
-        cd /root
+        graphicsChoice=$(echo -e "skip\nnvidia-optimus\nnvidia\nintel\namd" | fzf --height 10%)
 
         clear
 
         # Networking choice
-        mkdir /root/networkSelection
-        touch /root/networkSelection/NetworkManager
-        touch /root/networkSelection/dhcpcd
-        touch /root/networkSelection/skip
-        cd /root/networkSelection
-
-        clear
-
         echo -e "If you would like the installer to install NetworkManager or enable dhcpcd, choose one here. \n"
         echo -e "If you do not know what this means, choose 'NetworkManager'. If you would like to skip this, choose 'skip' \n"
 
-        networkChoice=$(fzf --height 10%)
-
-        cd /root
+        networkChoice=$(echo -e "skip\nNetworkManager\ndhcpcd" | fzf --height 10%)
 
         clear
 
         # Audio server
-        mkdir /root/audioSelection
-        touch /root/audioSelection/pipewire
-        touch /root/audioSelection/pulseaudio
-        touch /root/audioSelection/skip
-        cd /root/audioSelection
-
-        clear
-
         echo -e "Choose the audio server you would like to install. Pipewire is recommended here."
         echo -e "If you would like to skip installing an audio server, choose skip here. \n"
 
-        audioChoice=$(fzf --height 10%)
-
-        cd /root
+        audioChoice=$(echo -e "skip\npipewire\npulseaudio" | fzf --height 10%)
 
         clear
 
         # GUI selection
-        mkdir /root/desktopSelection
-        touch /root/desktopSelection/gnome
-        touch /root/desktopSelection/kde
-        touch /root/desktopSelection/xfce
-        touch /root/desktopSelection/sway
-        touch /root/desktopSelection/i3
-        touch /root/desktopSelection/cinnamon
-        touch /root/desktopSelection/skip
-        cd /root/desktopSelection
-
-        clear
-
         echo -e "Choose the desktop environment or window manager you would like to install."
         echo -e "If you would like to skip installing an DE/WM, choose skip here. (Such as to install one that isn't in this list) \n"
 
-        desktopChoice=$(fzf --height 10%)
-
-        cd /root
+        desktopChoice=$(echo -e "skip\ncinnamon\ni3\nsway\nxfce\nkde\ngnome" | fzf --height 10%)
 
         clear
 
@@ -292,15 +228,6 @@ confirmInstallationOptions() {
     fi
 
     # Allow the user to make sure things are sound before destroying the data on their disk
-    mkdir /root/confirmInstallMenu
-    touch /root/confirmInstallMenu/confirm
-
-    if [ $configDetected == "0" ]; then
-        touch /root/confirmInstallMenu/restart
-    elif [ $configDetected == "1" ]; then
-        touch /root/confirmInstallMenu/exit
-    fi
-    cd /root/confirmInstallMenu
     clear
 
     echo "Your disk will not be touched until you select 'confirm'"
@@ -336,7 +263,11 @@ confirmInstallationOptions() {
         echo "Install flatpak: $flatpakPrompt"
     fi
 
-    confirmInstall=$(fzf --height 10%)
+    if [ $configDetected == "0" ]; then
+        confirmInstall=$(echo -e "confirm\nrestart" | fzf --height 10%)
+    elif [ $configDetected == "1" ]; then
+        confirmInstall=$(echo -e "confirm\nexit" | fzf --height 10%)
+    fi
 
     if [ $confirmInstall == "restart" ]; then
         entry
@@ -535,6 +466,7 @@ install() {
 
         # Flatpak
         if [ $flatpakPrompt == "y" ] || [ $flatpakPrompt == "Y" ]; then
+            echo -e "Installing flatpak... \n"
             xbps-install -Sy -R $installRepo -r /mnt flatpak
         fi
 
