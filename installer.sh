@@ -276,8 +276,6 @@ confirmInstallationOptions() {
         exit 1
     fi
 
-    cd /root
-
 }
 
 install() {
