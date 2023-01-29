@@ -165,7 +165,7 @@ installOptions() {
     if [ $installType == "desktop" ]; then
 
         # Graphics driver options
-        echo -e "If you would like to install graphics drivers, please choose 'amd' or 'intel' here, depending on what graphics card you have. \n"
+        echo -e "If you would like to install graphics drivers, please choose 'amd', 'intel', 'nvidia', or 'nvidia-optimus' here, depending on what graphics card you have. \n"
         echo -e "If you would like to skip installing graphics drivers here, choose 'skip' \n"
 
         graphicsChoice=$(echo -e "skip\nnvidia-optimus\nnvidia\nintel\namd" | fzf --height 10%)
