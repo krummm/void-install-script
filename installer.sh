@@ -22,7 +22,6 @@ elif [ $# == 1 ]; then
         echo "User-defined config detected but is either misinput or the wrong file type. Please correct this and run again."
         exit 1
     fi
-
 fi
 
 entry() {
@@ -77,14 +76,6 @@ diskConfiguration() {
     diskPrompt=$(lsblk -o NAME -n -i -r | fzf --height 10%)
 
     diskInput="/dev/$diskPrompt"
-
-    if [[ $diskInput == /dev/nvme* ]] ; then
-        partition1="$diskInput"p1
-        partition2="$diskInput"p2
-    else
-        partition1="$diskInput"1
-        partition2="$diskInput"2
-    fi
 
     clear
 
@@ -210,19 +201,10 @@ confirmInstallationOptions() {
 
     # If a config is being used, we need to set some variables that weren't defined earlier in the script
     if [ $configDetected == "1" ]; then
-
         if [ $rootPrompt != "full" ]; then
             separateHomePossible=1
         else
             separateHomePossible=0
-        fi
-
-        if [[ $diskInput == /dev/nvme* ]] ; then
-            partition1="$diskInput"p1
-            partition2="$diskInput"p2
-        else
-            partition1="$diskInput"1
-            partition2="$diskInput"2
         fi
     fi
 
@@ -288,6 +270,14 @@ install() {
     parted $diskInput mkpart primary 0% 500M --script
     parted $diskInput set 1 esp on --script
     parted $diskInput mkpart primary 500M 100% --script
+
+    if [[ $diskInput == /dev/nvme* ]] ; then
+        partition1="$diskInput"p1
+        partition2="$diskInput"p2
+    else
+        partition1="$diskInput"1
+        partition2="$diskInput"2
+    fi
 
     mkfs.vfat $partition1
 
