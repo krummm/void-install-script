@@ -36,7 +36,7 @@ anyone else with this.
 
 Make certain both script files are in the same directory before running installer.sh
 
-As of right now, this script only supports encrypted installs and x86_64-efi installations
+As of right now, this script only supports encrypted installs, though it now has experimental arm64 support.
 
 # TODO
 ```
