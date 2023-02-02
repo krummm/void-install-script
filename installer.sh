@@ -27,6 +27,7 @@ fi
 entry() {
 
     # Defining things the installer will need
+    sysArch=$(uname -m)
     runDirectory=$(pwd)
     locale="LANG=en_US.UTF-8"
     libclocale="en_US.UTF-8 UTF-8"
@@ -127,6 +128,20 @@ installOptions() {
     echo -e "If you chose a glibc installation ISO, please choose glibc here.\n"
 
     muslSelection=$(echo -e "glibc\nmusl" | fzf --height 10%)
+
+    if [ $sysArch == "x86_64" ]; then
+        if [ $muslSelection == "glibc" ]; then
+            ARCH="x86_64"
+        elif [ $muslSelection == "musl" ]; then
+            ARCH="x86_64-musl"
+        fi
+    elif [ $sysArch == "arm64" ]; then
+        if [ $muslSelection == "glibc" ]; then
+            ARCH="aarch64"
+        elif [ $muslSelection == "musl" ]; then
+            ARCH="aarch64-musl"
+        fi
+    fi
 
     clear
 
@@ -232,6 +247,7 @@ confirmInstallationOptions() {
             echo "Home size: $homeInput"
         fi
     fi
+    echo "Architecture: $sysArch"
     echo "libc selection: $muslSelection"
     echo "Hostname: $hostnameInput"
     echo "Timezone: $timezonePrompt"
@@ -339,7 +355,7 @@ install() {
     echo -e "Installing base system in 1... \n"
     sleep 1
 
-    xbps-install -Sy -R $installRepo -r /mnt base-system cryptsetup grub-x86_64-efi lvm2
+    XBPS_ARCH=$ARCH xbps-install -Sy -R $installRepo -r /mnt base-system cryptsetup lvm2
     echo -e "Base system installed... \n"
     sleep 2
     echo -e "Configuring fstab... \n"
@@ -364,6 +380,13 @@ install() {
     echo $hostnameInput > /mnt/etc/hostname
 
     echo -e "Configuring grub... \n"
+
+    if [ $sysArch == "x86_64" ]; then
+        xbps-install -Sy -R $installRepo -r /mnt grub-x86_64-efi
+    elif [ $sysArch == "arm64" ]; then
+        xbps-install -Sy -R $installRepo -r /mnt grub-arm64-efi
+    fi
+
     partUUIDVar=$(blkid -o value -s UUID $partition2)
     sed -i -e 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=4"/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=4 rd.lvm.vg=void rd.luks.uuid='$partUUIDVar'"/g' /mnt/etc/default/grub
     #I really need to change how this is done, I know it's awful.
