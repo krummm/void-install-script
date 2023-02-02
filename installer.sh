@@ -35,7 +35,7 @@ entry() {
 
     # Make sure the installer is being ran on a supported architecture
 
-    if [ $sysArch != "x86_64" ] || [ $sysArch != "arm64" ]; then
+    if [ $sysArch != "x86_64" ] && [ $sysArch != "arm64" ]; then
         clear
         echo "This systems CPU architecture is not currently supported by this install script."
         exit 1
