@@ -46,8 +46,15 @@ rootPassword() {
     exit 0
 }
 
+sysArch=$(uname -m)
+
 echo -e "Running grub-install... \n"
-grub-install --removable --target=x86_64-efi
+
+if [ $sysArch == "x86_64" ]; then
+    grub-install --removable --target=x86_64-efi
+elif [ $sysArch == "arm64" ]; then
+    grub-install --removable --target=arm64-efi
+fi
 
 echo -e "Enabling all services... \n"
 if test -e "/etc/sv/dbus" ; then
