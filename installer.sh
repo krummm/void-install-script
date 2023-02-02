@@ -35,6 +35,12 @@ entry() {
 
     # Need to make sure the installer can actually access the internet to install packages
 
+    if [ $sysArch != "x86_64" ] || [ $sysArch != "arm64" ]; then
+        clear
+        echo "This systems CPU architecture is not currently supported by this install script."
+        exit 1
+    fi
+
     clear
 
     echo -e "Testing network connectivity... \n"
