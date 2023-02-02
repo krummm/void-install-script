@@ -33,7 +33,7 @@ entry() {
     libclocale="en_US.UTF-8 UTF-8"
     installRepo="https://repo-default.voidlinux.org/current"
 
-    # Need to make sure the installer can actually access the internet to install packages
+    # Make sure the installer is being ran on a supported architecture
 
     if [ $sysArch != "x86_64" ] || [ $sysArch != "arm64" ]; then
         clear
@@ -42,6 +42,8 @@ entry() {
     fi
 
     clear
+
+    # Need to make sure the installer can actually access the internet to install packages
 
     echo -e "Testing network connectivity... \n"
 
