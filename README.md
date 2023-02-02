@@ -1,5 +1,5 @@
 # void-install-script
-Shell script installer for Void Linux
+WIP Shell script installer for Void Linux
 
 This installer was primarily created to serve as an installer with encryption support while also having general installation options one would want.
 
