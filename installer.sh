@@ -34,7 +34,6 @@ entry() {
     installRepo="https://repo-default.voidlinux.org/current"
 
     # Make sure the installer is being ran on a supported architecture
-
     if [ $sysArch != "x86_64" ] && [ $sysArch != "arm64" ]; then
         clear
         echo "This systems CPU architecture is not currently supported by this install script."
@@ -44,7 +43,6 @@ entry() {
     clear
 
     # Need to make sure the installer can actually access the internet to install packages
-
     echo -e "Testing network connectivity... \n"
 
     ping -c 1 google.com &>/dev/null
@@ -64,8 +62,7 @@ entry() {
     echo -e "Grabbing installer dependencies... \n"
     xbps-install -Sy -R $installRepo fzf parted void-repo-nonfree
 
-    # Check for a config defined as a flag, if one exists then move to confirm options with values defined in said config
-    
+    # Check for a config defined as a flag, if one exists then move to confirm options with values defined in said config    
     if [ $configDetected == "1" ]; then
         confirmInstallationOptions
     else
@@ -296,6 +293,9 @@ install() {
     parted $diskInput mkpart primary 500M 100% --script
 
     if [[ $diskInput == /dev/nvme* ]] ; then
+        partition1="$diskInput"p1
+        partition2="$diskInput"p2
+    elif [[ $diskInput == /dev/mmcblk* ]] ; then
         partition1="$diskInput"p1
         partition2="$diskInput"p2
     else
