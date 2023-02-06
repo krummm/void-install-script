@@ -40,6 +40,13 @@ entry() {
         exit 1
     fi
 
+    # Make sure the installer can find the secondary script before continuing
+    if test -e "$runDirectory/systemchroot.sh" ; then
+        echo -e "Secondary script found. Continuing... \n"
+    else
+        echo -e "Secondary script appears to be missing. This could be because it is incorrectly named, or simply does not exist. \n"
+        echo -e "Please correct this error and run again. \n"
+        exit 1
     clear
 
     # Need to make sure the installer can actually access the internet to install packages
@@ -125,6 +132,12 @@ diskConfiguration() {
 }
 
 installOptions() {
+
+    clear
+
+    # Encryption prompt
+    echo -e "Should this installation be encrypted? (y/n) \n"
+    read encryptionPrompt
 
     clear
 
@@ -242,7 +255,9 @@ confirmInstallationOptions() {
     echo -e "If the following choices are correct, you may select 'confirm' to proceed with the installation. \n"
     echo -e "Selecting 'confirm' here will destroy all data on the selected disk and install with the options below. \n"
 
+    echo -e "Architecture: $sysArch \n"
     echo "Install disk: $diskInput"
+    echo "Encryption: $encryptionPrompt"
     echo "Create swap: $swapPrompt"
     if [ $swapPrompt == "y" ] || [ $swapPrompt == "Y" ]; then
         echo "Swap size: $swapInput"
@@ -254,7 +269,6 @@ confirmInstallationOptions() {
             echo "Home size: $homeInput"
         fi
     fi
-    echo "Architecture: $sysArch"
     echo "libc selection: $muslSelection"
     echo "Hostname: $hostnameInput"
     echo "Timezone: $timezonePrompt"
@@ -308,14 +322,24 @@ install() {
     mkfs.vfat $partition1
 
     clear
-    echo "Configuring partitions for encrypted install..."
-    echo -e "Enter your encryption passphrase here, the stronger the better. \n"
 
-    cryptsetup luksFormat --type luks1 $partition2
-    echo -e "Opening new encrypted container... \n"
-    cryptsetup luksOpen $partition2 void
-    echo -e "Creating volume group... \n"
-    vgcreate void /dev/mapper/void
+    if [ $encryptionPrompt == "y" ] || [ $encryptionPrompt == "Y" ]; then
+        echo "Configuring partitions for encrypted install..."
+        echo -e "Enter your encryption passphrase here, the stronger the better. \n"
+
+        cryptsetup luksFormat --type luks1 $partition2
+        echo -e "Opening new encrypted container... \n"
+        cryptsetup luksOpen $partition2 void
+    else
+        pvcreate $partition2
+        echo -e "Creating volume group... \n"
+        vgcreate void $partition2
+    fi
+
+    if [ $encryptionPrompt == "y" ] || [ $encryptionPrompt == "Y" ]; then
+        echo -e "Creating volume group... \n"
+        vgcreate void /dev/mapper/void
+    fi
 
     echo -e "Creating volumes... \n"
 
@@ -365,7 +389,18 @@ install() {
     echo -e "Installing base system in 1... \n"
     sleep 1
 
-    XBPS_ARCH=$ARCH xbps-install -Sy -R $installRepo -r /mnt base-system cryptsetup lvm2
+    XBPS_ARCH=$ARCH xbps-install -Sy -R $installRepo -r /mnt base-system lvm2
+
+    # Only need cryptsetup if the user wants an encrypted install
+    if [ $encryptionPrompt == "y" ] || [ $encryptionPrompt == "Y" ]; then
+        xbps-install -Sy -R $installRepo -r /mnt cryptsetup
+    fi
+
+    # Kernel isn't included in base-system package for aarch64
+    if [ $sysArch == "amd64" ]; then
+        xbps-install -Sy -R $installRepo -r /mnt linux
+    fi
+
     echo -e "Base system installed... \n"
     sleep 2
 
