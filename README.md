@@ -5,7 +5,7 @@ This installer was primarily created to serve as an installer with encryption su
 
 # Features
 ```
-Encrypted install
+Full-disk encrypted install
 Experimental config support
 Install a bare minimum system quickly
 Install a system with networking, graphics drivers, audio server, and a DE/WM ready to go on reboot
@@ -36,12 +36,11 @@ anyone else with this.
 
 Make certain both script files are in the same directory before running installer.sh
 
-As of right now, this script only supports encrypted installs, though it now has experimental arm64 support.
+As of right now, this script only supports encrypted installs.
 
 # TODO
 ```
 Add input validation and error checking to the scripts
 Add legacy boot support
-Add support for filesystems other than ext4
 Add script logging
 ```
