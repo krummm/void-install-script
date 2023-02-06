@@ -167,6 +167,7 @@ installOptions() {
     echo -e "Would you like a minimal installation or a desktop installation? \n"
     echo -e "The minimal installation does not configure networking, graphics drivers, DE/WM, etc. You can manually configure in a chroot after the install has finished. \n"
     echo -e "The desktop installation will allow you to install NetworkManager, install graphics drivers, and install a DE or WM from this installer with sane defaults. \n"
+    echo -e "If you choose the minimal installation, dhcpcd will be included by default and can be enabled in the new install for networking. \n"
 
     installType=$(echo -e "minimal\ndesktop" | fzf --height 10%)
 
