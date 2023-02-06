@@ -47,6 +47,8 @@ entry() {
         echo -e "Secondary script appears to be missing. This could be because it is incorrectly named, or simply does not exist. \n"
         echo -e "Please correct this error and run again. \n"
         exit 1
+    fi
+    
     clear
 
     # Need to make sure the installer can actually access the internet to install packages
