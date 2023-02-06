@@ -176,7 +176,8 @@ installOptions() {
     if [ $installType == "desktop" ]; then
 
         # Graphics driver options
-        echo -e "If you would like to install graphics drivers, please choose 'amd', 'intel', 'nvidia', or 'nvidia-optimus' here, depending on what graphics card you have. \n"
+        echo -e "If you would like to install graphics drivers, please choose here. \n"
+        echo -e "Both 'nvidia' and 'nvidia-optimus' include the proprietary official driver. \n"
         echo -e "If you would like to skip installing graphics drivers here, choose 'skip' \n"
 
         graphicsChoice=$(echo -e "skip\nnvidia-optimus\nnvidia\nintel\namd" | fzf --height 10%)
@@ -366,9 +367,10 @@ install() {
     XBPS_ARCH=$ARCH xbps-install -Sy -R $installRepo -r /mnt base-system cryptsetup lvm2
     echo -e "Base system installed... \n"
     sleep 2
-    echo -e "Configuring fstab... \n"
 
-    echo "$partition1	/boot/efi	vfat	defaults	0	0" >> /mnt/etc/fstab
+    echo -e "Configuring fstab... \n"
+    partVar=$(blkid -o value -s UUID $partition1)
+    echo "UUID=$partVar 	/boot/efi	vfat	defaults	0	0" >> /mnt/etc/fstab
     echo "/dev/void/root  /     ext4     defaults              0       0" >> /mnt/etc/fstab
 
     if [ $swapPrompt == "y" ]; then
@@ -395,8 +397,8 @@ install() {
         xbps-install -Sy -R $installRepo -r /mnt grub-arm64-efi
     fi
 
-    partUUIDVar=$(blkid -o value -s UUID $partition2)
-    sed -i -e 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=4"/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=4 rd.lvm.vg=void rd.luks.uuid='$partUUIDVar'"/g' /mnt/etc/default/grub
+    partVar=$(blkid -o value -s UUID $partition2)
+    sed -i -e 's/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=4"/GRUB_CMDLINE_LINUX_DEFAULT="loglevel=4 rd.lvm.vg=void rd.luks.uuid='$partVar'"/g' /mnt/etc/default/grub
     #I really need to change how this is done, I know it's awful.
     echo "GRUB_ENABLE_CRYPTODISK=y" >> /mnt/etc/default/grub
     echo -e "Grub configured... \n"
