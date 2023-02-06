@@ -9,6 +9,7 @@ swapInput="4G" # Define swap size
 rootPrompt="full" # Define size of root partition, 'full' will consume the rest of the disk after bootloader and swap in this example. An example acceptable value would be '50G'
 homePrompt="n" # Enable separate home partition (y/n) NOTE: If your root partition is set to 'full', having a separate home partition on the same disk is impossible.
 homeInput="full" # Define size of home partition, an example acceptable value for this is '50G', 'full' will consume the rest of the disk after bootloader, swap, and root
+encryptionPrompt="y" # Tells the installer if it should encrypt the installation
 
 muslSelection="glibc" # Choose which libc implementation you want, another acceptable value here is 'musl'
 hostnameInput="mothership" # Set the hostname of the computer you are installing to
