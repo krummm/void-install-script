@@ -51,9 +51,9 @@ sysArch=$(uname -m)
 echo -e "Running grub-install... \n"
 
 if [ $sysArch == "x86_64" ]; then
-    grub-install --removable --target=x86_64-efi
+    grub-install --removable --target=x86_64-efi --efi-directory=/boot/efi
 elif [ $sysArch == "arm64" ]; then
-    grub-install --removable --target=arm64-efi
+    grub-install --removable --target=arm64-efi --efi-directory=/boot/efi
 fi
 
 echo -e "Enabling all services... \n"
