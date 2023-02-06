@@ -36,8 +36,6 @@ anyone else with this.
 
 Make certain both script files are in the same directory before running installer.sh
 
-As of right now, this script only supports encrypted installs.
-
 # TODO
 ```
 Add input validation and error checking to the scripts
