@@ -43,5 +43,4 @@ This installer will only setup disks with LVM
 ```
 Add input validation and error checking to the scripts
 Add legacy boot support
-Add script logging
 ```
