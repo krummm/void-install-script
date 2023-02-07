@@ -48,7 +48,7 @@ entry() {
         echo -e "Please correct this error and run again. \n"
         exit 1
     fi
-    
+
     clear
 
     # Need to make sure the installer can actually access the internet to install packages
@@ -88,7 +88,7 @@ diskConfiguration() {
     lsblk -o NAME,SIZE,TYPE
     echo -e "The disk you choose will not be modified until you confirm your installation options. \n"
     echo -e "Please choose the disk you would like to partition and install Void Linux to: \n"
-    diskPrompt=$(lsblk -o NAME -n -i -r | fzf --height 10%)
+    diskPrompt=$(lsblk -d -o NAME -n -i -r | fzf --height 10%)
 
     diskInput="/dev/$diskPrompt"
 
