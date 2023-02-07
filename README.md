@@ -37,6 +37,8 @@ anyone else with this.
 
 Make certain both script files are in the same directory before running installer.sh
 
+This installer will only setup disks with LVM
+
 # TODO
 ```
 Add input validation and error checking to the scripts
