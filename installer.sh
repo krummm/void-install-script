@@ -1,4 +1,6 @@
 #!/bin/bash
+runDirectory=$(pwd)
+(
 user=$(whoami)
 
 if [ $user != root ]; then
@@ -28,7 +30,6 @@ entry() {
 
     # Defining things the installer will need
     sysArch=$(uname -m)
-    runDirectory=$(pwd)
     locale="LANG=en_US.UTF-8"
     libclocale="en_US.UTF-8 UTF-8"
     installRepo="https://repo-default.voidlinux.org/current"
@@ -552,3 +553,4 @@ chrootFunction() {
 }
 
 entry
+) 2>&1 | tee -a $runDirectory/void-installer.log
