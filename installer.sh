@@ -1,6 +1,5 @@
 #!/bin/bash
 runDirectory=$(pwd)
-(
 user=$(whoami)
 
 if [ $user != root ]; then
@@ -553,4 +552,3 @@ chrootFunction() {
 }
 
 entry
-) 2>&1 | tee -a $runDirectory/void-installer.log
