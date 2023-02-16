@@ -1,5 +1,4 @@
 #!/bin/bash
-runDirectory=$(pwd)
 user=$(whoami)
 
 if [ $user != root ]; then
@@ -28,6 +27,7 @@ fi
 entry() {
 
     # Defining things the installer will need
+    runDirectory=$(pwd)
     sysArch=$(uname -m)
     locale="LANG=en_US.UTF-8"
     libclocale="en_US.UTF-8 UTF-8"
@@ -541,6 +541,9 @@ chrootFunction() {
     touch /root/selectTimezone
     echo "$timezonePrompt" >> /root/selectTimezone
     cp /root/selectTimezone /mnt/tmp/selectTimezone
+    touch /root/encryption
+    echo "$encryptionPrompt" >> /root/encryption
+    cp /root/encryption /mnt/tmp/encryption
     touch /root/installDrive
     echo "$diskInput" >> /root/installDrive
     cp /root/installDrive /mnt/tmp/installDrive
