@@ -107,7 +107,9 @@ if test -e "/usr/bin/flatpak" ; then
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 fi
 
-if test -e "/usr/bin/cryptsetup" ; then
+encryptionPrompt=$(cat /tmp/encryption)
+
+if [ $encryptionPrompt == "y" ] || [ $encryptionPrompt == "Y" ]; then
 
     echo -e "Configuring LUKS key... \n"
 
