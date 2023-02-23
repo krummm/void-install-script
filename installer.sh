@@ -274,6 +274,12 @@ confirmInstallationOptions() {
     echo -e "Architecture: $sysArch \n"
     echo "Install disk: $diskInput"
     echo "Encryption: $encryptionPrompt"
+    if [ $encryptionPrompt == "y" ] || [ $encryptionPrompt == "Y" ]; then
+        echo "Wipe disk: $wipePrompt"
+        if [ $wipePrompt == "y" ] || [ $wipePrompt == "Y" ]; then
+            echo "Number of passes: $passInput"
+        fi
+    fi
     echo "Create swap: $swapPrompt"
     if [ $swapPrompt == "y" ] || [ $swapPrompt == "Y" ]; then
         echo "Swap size: $swapInput"
