@@ -124,7 +124,7 @@ diskConfiguration() {
         if [ $homePrompt == "y" ] || [ $homePrompt == "Y" ]; then
             clear
             echo "How large would you like your home partition to be? (Example: '100G')"
-            echo -e "You can choose to use the rest of your disk if you didn't give the entire disk to your root partition by entering 'full' \n"
+            echo -e "You can choose to use the rest of your disk after the root partition by entering 'full' here. \n"
             read homeInput
         fi
     fi
@@ -145,7 +145,6 @@ installOptions() {
 
     # Getting libc options
     echo -e "What kind of system are you installing? (musl or glibc) \n"
-    echo -e "If you chose a glibc installation ISO, please choose glibc here.\n"
 
     muslSelection=$(echo -e "glibc\nmusl" | fzf --height 10%)
 
@@ -180,7 +179,7 @@ installOptions() {
 
     # Getting installation profile
     echo -e "Would you like a minimal installation or a desktop installation? \n"
-    echo -e "The minimal installation does not configure networking, graphics drivers, DE/WM, etc. You can manually configure in a chroot after the install has finished. \n"
+    echo -e "The minimal installation does not configure networking, graphics drivers, DE/WM, etc. \n"
     echo -e "The desktop installation will allow you to install NetworkManager, install graphics drivers, and install a DE or WM from this installer with sane defaults. \n"
     echo -e "If you choose the minimal installation, dhcpcd will be included by default and can be enabled in the new install for networking. \n"
 
@@ -303,6 +302,21 @@ install() {
 
     clear
     echo "Begin disk partitioning..."
+
+    # We need to wipe out any existing VG on the chosen disk before the installer can continue, this is somewhat scuffed but works.
+    deviceVG=$(pvdisplay $diskInput* | grep "VG Name" | while read c1 c2; do echo $c2; done | sed 's/Name//g')
+
+    if [ -z $deviceVG ]; then
+        echo -e "Existing VG not found, continuing... \n"
+    else
+        echo -e "Existing VG found... \n"
+        echo -e "Wiping out existing VG... \n"
+
+        vgchange -a n $deviceVG
+        vgremove $deviceVG
+        wipefs -a $diskInput
+    fi
+
 
     # Make EFI boot partition and secondary partition to store encrypted volumes
     parted $diskInput mklabel gpt
@@ -500,7 +514,7 @@ install() {
             sleep 1
         elif [ $desktopChoice == "sway" ]; then
             echo -e "Sway will have to be started manually on login. This can be done by entering 'dbus-run-session sway' after logging in to the new installation. \n"
-            sleep 4
+            read -p "Press Enter to continue." </dev/tty
             echo -e "Installing Sway window manager... \n"
             xbps-install -Sy -R $installRepo -r /mnt sway elogind polkit-elogind dbus-elogind foot xorg-fonts
             echo -e "Sway installed. \n"
