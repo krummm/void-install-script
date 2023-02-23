@@ -143,6 +143,21 @@ installOptions() {
 
     clear
 
+    if [ $encryptionPrompt == "y" ] || [ $encryptionPrompt == "Y" ]; then
+        clear
+        echo -e "Would you like to securely wipe the selected disk before setup? (y/n) \n"
+        echo -e "This can take quite a long time depending on how many passes you choose. \n"
+        read wipePrompt
+
+        if [ $wipePrompt == "y" ] || [ $wipePrompt == "Y" ]; then
+            echo -e "How many passes would you like to do on this disk? \n"
+            echo -e "Sane values include 1-3. The more passes you choose, the longer this will take. \n"
+            read passInput
+        fi
+    fi
+
+    clear
+
     # Getting libc options
     echo -e "What kind of system are you installing? (musl or glibc) \n"
 
@@ -299,6 +314,12 @@ confirmInstallationOptions() {
 }
 
 install() {
+
+    if [ $wipePrompt == "y" ] || [ $wipePrompt == "Y" ]; then
+        clear
+        echo -e "Beginning disk secure erase with $passInput passes. \n"
+        shred --verbose --random-source=/dev/urandom -n$passInput --zero $diskInput
+    fi
 
     clear
     echo "Begin disk partitioning..."
