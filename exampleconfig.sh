@@ -10,6 +10,8 @@ rootPrompt="full" # Define size of root partition, 'full' will consume the rest 
 homePrompt="n" # Enable separate home partition (y/n) NOTE: If your root partition is set to 'full', having a separate home partition on the same disk is impossible.
 homeInput="full" # Define size of home partition, an example acceptable value for this is '50G', 'full' will consume the rest of the disk after bootloader, swap, and root
 encryptionPrompt="y" # Tells the installer if it should encrypt the installation
+wipePrompt="y" # Tells the installer if it should overwrite the disk with random data
+passInput="1" # Tells the installer how many times it should overwrite the disk with random data, only available if wipePrompt is set to 'y'
 
 muslSelection="glibc" # Choose which libc implementation you want, another acceptable value here is 'musl'
 hostnameInput="mothership" # Set the hostname of the computer you are installing to
