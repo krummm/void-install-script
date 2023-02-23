@@ -6,6 +6,7 @@ This installer was primarily created to serve as an installer with encryption su
 # Features
 ```
 Full-disk encrypted install
+Securely erase disk pre-encryption
 Experimental config support
 Experimental arm64 support
 Install a bare minimum system quickly
