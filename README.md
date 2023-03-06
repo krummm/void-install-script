@@ -5,13 +5,19 @@ This installer was primarily created to serve as an installer with encryption su
 
 # Features
 ```
-Full-disk encrypted install
-Securely erase disk pre-encryption
-Experimental config support
-Experimental arm64 support
-Install a bare minimum system quickly
-Install a system with networking, graphics drivers, audio server, and a DE/WM ready to go on reboot
-Select which of the above features you would like, if any
+-Option to fully encrypt installation disk
+-Option to pre-install and pre-configure the following;
+--Graphics drivers
+--Networking
+--Audio server
+--DE or WM
+--Flatpak
+--Or, choose to do none of these and install a bare-minimum system
+-Option to securely erase the installation disk with shred
+-Config support
+-User creation and basic configuration
+-Experimental arm64 support (Remains untested)
+-Configure partitions in the installer for home, swap, and root with LVM and ext4
 ```
 
 # Instructions
@@ -28,20 +34,15 @@ Done.
 ```
 # Config usage
 ```
-If you want to use the experimental config feature, run the installer with ./installer.sh /path/to/myconfig.sh
+If you want to use the config feature, run the installer with ./installer.sh /path/to/myconfig.sh
 Take a look at exampleconfig.sh for usage.
 ```
 
 # Notes
-Obviously, this is in no way officially supported nor should it be treated like such. Any issues with this install script should be filed here, do not bother
-anyone else with this.
+This installer is not officially supported, if you run into any problems please file them on this github page.
 
-Make certain both script files are in the same directory before running installer.sh
-
-This installer will only setup disks with LVM
 
 # TODO
 ```
 Add input validation and error checking to the scripts
-Add legacy boot support
 ```
