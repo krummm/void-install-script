@@ -15,6 +15,7 @@ This installer was primarily created to serve as an installer with encryption su
 --Or, choose to do none of these and install a bare-minimum system
 -Option to securely erase the installation disk with shred
 -Config support
+-Choose between glibc and musl libc implementations
 -User creation and basic configuration
 -Experimental arm64 support (Remains untested)
 -Configure partitions in the installer for home, swap, and root with LVM and ext4
