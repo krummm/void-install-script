@@ -7,10 +7,10 @@ This installer was primarily created to serve as an installer with encryption su
 ```
 -Option to fully encrypt installation disk
 -Option to pre-install and pre-configure the following;
---Graphics drivers
---Networking
---Audio server
---DE or WM
+--Graphics drivers (amd, nvidia, intel, nvidia-optimus, none)
+--Networking (dhcpcd, NetworkManager, none)
+--Audio server (pipewire, pulseaudio, none)
+--DE or WM (gnome, kde, xfce, sway, i3, cinnamon, none)
 --Flatpak
 --Or, choose to do none of these and install a bare-minimum system
 -Option to securely erase the installation disk with shred
