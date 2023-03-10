@@ -107,6 +107,10 @@ if test -e "/usr/bin/flatpak" ; then
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 fi
 
+if test -e "/dev/mapper/void-home" ; then
+    mount /dev/mapper/void-home /home
+fi
+
 encryptionPrompt=$(cat /tmp/encryption)
 
 if [ $encryptionPrompt == "y" ] || [ $encryptionPrompt == "Y" ]; then
@@ -150,20 +154,9 @@ echo -e "If you do not want to add a user now, enter 'skip' \n"
 read createUser
 
 if [ $createUser == "skip" ]; then
-
-    if test -e "/dev/mapper/void-home" ; then
-        mount /dev/mapper/void-home /home
-    fi
-
-    clear
-    
+    clear    
     rootPassword
-
 else
-
-    if test -e "/dev/mapper/void-home" ; then
-        mount /dev/mapper/void-home /home
-    fi
 
     useradd $createUser -m -d /home/$createUser
     usermod -aG audio,video,input,kvm $createUser
