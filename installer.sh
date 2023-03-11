@@ -9,17 +9,16 @@ fi
 # Check to see if there is a flag when executing installer.sh and make sure it's a .sh file to be imported as an installation config
 if [ $# != 1 ]; then
     echo "Continuing without config file..."
-    sleep 1
     configDetected=0
 elif [ $# == 1 ]; then
     echo "Attempting to use user-defined config file..."
-    sleep 1
 
     if [[ $1 == *.sh ]] ; then
         source $1
         configDetected=1
     else
-        echo "User-defined config detected but is either misinput or the wrong file type. Please correct this and run again."
+        echo -e "User-defined config detected but is either misinput or the wrong file type. \n"
+        echo -e "Please correct this error and run again. \n"
         exit 1
     fi
 fi
@@ -195,7 +194,7 @@ installOptions() {
     # Getting installation profile
     echo -e "Would you like a minimal installation or a desktop installation? \n"
     echo -e "The minimal installation does not configure networking, graphics drivers, DE/WM, etc. \n"
-    echo -e "The desktop installation will allow you to install NetworkManager, install graphics drivers, and install a DE or WM from this installer with sane defaults. \n"
+    echo -e "The desktop installation will allow you to configure networking, install graphics drivers, and install a DE or WM from this installer with sane defaults. \n"
     echo -e "If you choose the minimal installation, dhcpcd will be included by default and can be enabled in the new install for networking. \n"
 
     installType=$(echo -e "minimal\ndesktop" | fzf --height 10%)
@@ -224,7 +223,7 @@ installOptions() {
 
         # Audio server
         echo -e "Choose the audio server you would like to install. Pipewire is recommended here."
-        echo -e "If you would like to skip installing an audio server, choose skip here. \n"
+        echo -e "If you would like to skip installing an audio server, choose 'skip' here. \n"
 
         audioChoice=$(echo -e "skip\npipewire\npulseaudio" | fzf --height 10%)
 
@@ -232,7 +231,7 @@ installOptions() {
 
         # GUI selection
         echo -e "Choose the desktop environment or window manager you would like to install."
-        echo -e "If you would like to skip installing an DE/WM, choose skip here. (Such as to install one that isn't in this list) \n"
+        echo -e "If you would like to skip installing an DE/WM, choose 'skip' here. (Such as to install one that isn't in this list) \n"
 
         desktopChoice=$(echo -e "skip\ncinnamon\ni3\nsway\nxfce\nkde\ngnome" | fzf --height 10%)
 
@@ -303,12 +302,12 @@ confirmInstallationOptions() {
     echo "Installation profile: $installType"
     if [ $installType == "desktop" ]; then
         echo "Graphics drivers: $graphicsChoice"
-        if [ $desktopChoice == "i3" ]; then
-            echo "Install lightdm with i3: $i3prompt"
-        fi 
         echo "Networking: $networkChoice"
         echo "Audio server: $audioChoice"
         echo "DE/WM: $desktopChoice"
+        if [ $desktopChoice == "i3" ]; then
+            echo "Install lightdm with i3: $i3prompt"
+        fi 
         echo "Install flatpak: $flatpakPrompt"
     fi
 
@@ -343,7 +342,7 @@ install() {
     deviceVG=$(pvdisplay $diskInput* | grep "VG Name" | while read c1 c2; do echo $c2; done | sed 's/Name//g')
 
     if [ -z $deviceVG ]; then
-        echo -e "Existing VG not found, continuing... \n"
+        echo -e "Existing VG not found, no need to do anything... \n"
     else
         echo -e "Existing VG found... \n"
         echo -e "Wiping out existing VG... \n"
@@ -540,7 +539,7 @@ install() {
             sleep 1
         elif [ $desktopChoice == "kde" ]; then
             echo -e "Installing KDE desktop environment... \n"
-            xbps-install -Sy -R $installRepo -r /mnt kde5 kde5-baseapps kdegraphics-thumbnailers ffmpegthumbs xorg-minimal
+            xbps-install -Sy -R $installRepo -r /mnt kde5 kde5-baseapps xorg-minimal
             echo -e "KDE installed. \n"
             sleep 1
         elif [ $desktopChoice == "xfce" ]; then
@@ -574,6 +573,7 @@ install() {
         if [ $flatpakPrompt == "y" ] || [ $flatpakPrompt == "Y" ]; then
             echo -e "Installing flatpak... \n"
             xbps-install -Sy -R $installRepo -r /mnt flatpak
+            echo -e "Flatpak installed. \n"
         fi
 
         echo -e "Desktop setup completed. \n"
