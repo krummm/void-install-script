@@ -95,13 +95,6 @@ if test -e "/etc/sv/lightdm" ; then
     ln -s /etc/sv/lightdm /var/service
 fi
 
-if test -e "/usr/bin/grimshot" ; then
-    if test -e "/etc/sv/elogind" ; then
-        echo -e "Starting elogind... \n"
-        ln -s /etc/sv/elogind /var/service
-    fi
-fi
-
 if test -e "/usr/bin/flatpak" ; then
     echo -e "Adding flathub repo for flatpak... \n"
     flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
