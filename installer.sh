@@ -236,6 +236,12 @@ installOptions() {
 
         desktopChoice=$(echo -e "skip\ncinnamon\ni3\nsway\nxfce\nkde\ngnome" | fzf --height 10%)
 
+        if [ $desktopChoice == "i3" ]; then
+            clear
+            echo -e "Would you like to install lightdm with i3wm? (y/n) \n"
+            read i3prompt
+        fi
+
         clear
 
         # Flatpak
@@ -297,6 +303,9 @@ confirmInstallationOptions() {
     echo "Installation profile: $installType"
     if [ $installType == "desktop" ]; then
         echo "Graphics drivers: $graphicsChoice"
+        if [ $desktopChoice == "i3" ]; then
+            echo "Install lightdm with i3: $i3prompt"
+        fi 
         echo "Networking: $networkChoice"
         echo "Audio server: $audioChoice"
         echo "DE/WM: $desktopChoice"
@@ -550,8 +559,6 @@ install() {
             echo -e "Installing i3wm... \n"
             xbps-install -Sy -R $installRepo -r /mnt xorg-minimal xinit i3 xorg-fonts
             echo -e "i3wm has been installed. \n"
-            echo -e "Would you like to install lightdm with i3wm? (y/n) \n"
-            read i3prompt
             if [ $i3prompt == "y" ] || [ $i3prompt == "Y" ]; then
                 echo -e "Installing lightdm... \n"
                 xbps-install -Sy -R $installRepo -r /mnt lightdm lightdm-gtk3-greeter
